@@ -1,14 +1,14 @@
-import { Page } from "@playwright/test";
+import { expect, Page } from "@playwright/test";
 
 export class LoginPage {
     private page: Page;
 
-    private usernameInput = '#username';
+    private usernameInput = '#user-name';
     private passwordInput = '#password';
     private loginButton = '#login-button';
     private errorMessage = '.error-message-container';
     
-    constructor(page) {
+    constructor(page: Page) {
         this.page = page;
     }
 
@@ -24,7 +24,7 @@ export class LoginPage {
         await this.page.click(this.loginButton);
     }
 
-    async isErrorMessageVisible() {
-        return await this.page.isVisible(this.errorMessage);
+    async getErrorMessage() {
+    return this.page.locator(this.errorMessage);
     }
 }

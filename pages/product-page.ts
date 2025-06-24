@@ -9,4 +9,9 @@ export class ProductPage {
     this.page = page;
     }
 
+    async getInventoryItems() {
+        await this.page.waitForSelector(this.inventoryItem);
+        return await this.page.$$(this.inventoryItem);
+    }
+
 }
