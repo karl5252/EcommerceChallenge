@@ -1,9 +1,3 @@
-// verify if page loads and user can add products to cart
-// verify if user can remove products from cart
-// verify if cart icon updates with the number of items in the cart
-// verify if sorting functionality works correctly
-// verify reset app state cleans the cart and resets the app state
-// verify if prices are displayed correctly
 
 import test, { expect } from "@playwright/test";
 import { loadUsers } from "../utils/loadUsers";
@@ -13,7 +7,6 @@ import { NavigationPage } from "../pages/navigation-page";
 
 // verify if product images are displayed correctly
 const users = loadUsers();
-const standard_user = users['standard_user'];
 const validUsers = Object.values(users).filter(user => user.shouldBeLoggedIn);
 
 Object.values(validUsers).forEach(user => {
