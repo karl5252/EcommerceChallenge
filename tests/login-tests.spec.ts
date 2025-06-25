@@ -8,13 +8,21 @@ import { NavigationPage } from "../pages/navigation-page";
 const users = loadUsers();
 const standard_user = users['standard_user'];
 
+test.describe('Authentication Tests', () => {
+  let loginPage: LoginPage;
+  let productPage: ProductPage;
+  let navigationPage: NavigationPage;
 
+  test.beforeEach(async ({ page }) => {
+    loginPage = new LoginPage(page);
+    productPage = new ProductPage(page);
+    navigationPage = new NavigationPage(page);
+    
+    await loginPage.openPage(); // Every auth test starts here
+  });
 Object.values(users).forEach(user => {
-  test(`verify ${user.shouldBeLoggedIn ? 'successful' : 'failed'} login for ${user.username}`, async ({page}) => {
-    const loginPage = new LoginPage(page);
-    const productPage = new ProductPage(page);
+  test(`verify ${user.shouldBeLoggedIn ? 'successful' : 'failed'} login for ${user.username}`,{tag: ['@auth', '@smoke', user.shouldBeLoggedIn ? '@positive' : '@negative']}, async ({page}) => {
 
-    await loginPage.openPage();
     // Perform login with the user credentials
     await loginPage.login(user.username, user.password);
 
@@ -33,13 +41,7 @@ Object.values(users).forEach(user => {
 });
 
 
-test('verify user can logout', async ({ page }) => {
-  const loginPage = new LoginPage(page);
-  const productPage = new ProductPage(page);
-    const navigationPage = new NavigationPage(page);
-
-
-  await loginPage.openPage();
+test('verify user can logout', {tag:['@auth', '@smoke', '@logout']}, async ({ page }) => {
   await loginPage.login(standard_user.username, standard_user.password);
 
   // Assert successful login
@@ -57,4 +59,4 @@ test('verify user can logout', async ({ page }) => {
   await page.reload();
   await loginPage.expectLoginButtonVisible();
 });
-  
+});
