@@ -45,10 +45,18 @@ Object.values(validUsers).forEach(user => {
     await page.click('.checkout_button');
     // Verify that we are on the checkout page
     await expect(page).toHaveURL(/.*\/checkout-step-one/);
-    // Fill in the checkout form
+    // Fill in the checkout form with early fail
     await page.fill('#first-name', 'John');
     await page.fill('#last-name', 'Doe');
     await page.fill('#postal-code', '12345');
+
+    const firstName = await page.inputValue('#first-name');
+    const lastName = await page.inputValue('#last-name'); 
+    const postalCode = await page.inputValue('#postal-code');
+
+    expect(firstName).toBe('John');
+    expect(lastName).toBe('Doe');
+    expect(postalCode).toBe('12345');
 
     // Click on the continue button
     await page.click('#continue');
