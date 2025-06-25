@@ -8,49 +8,50 @@ import { NavigationPage } from "../pages/navigation-page";
 const users = loadUsers();
 const validUsers = Object.values(users).filter(user => user.shouldBeLoggedIn);
 
-Object.values(validUsers).forEach(user => {
-    test(`verify that burger menu can be opened and closed for ${user.username}`, async ({ page }) => {
-        const loginPage = new LoginPage(page);
-        const productPage = new ProductPage(page);
-        const navigationPage = new NavigationPage(page);
+test.describe('Burger Menu Tests', () => {
+  let loginPage: LoginPage;
+  let productPage: ProductPage;
+  let navigationPage: NavigationPage;
 
-        await loginPage.openPage();
-        await loginPage.login(user.username, user.password);
+  test.beforeEach(async ({ page }) => {
+    loginPage = new LoginPage(page);
+    productPage = new ProductPage(page);
+    navigationPage = new NavigationPage(page);
+    
+    await loginPage.openPage();
+  });
 
-        // Verify that the inventory items are visible
-        const inventoryItems = await productPage.getInventoryItems();
-        expect(inventoryItems.length).toBeGreaterThan(0);
+  Object.values(validUsers).forEach(user => {
+    test(`verify burger menu can be opened and closed for ${user.username}`, {
+      tag: ['@burger', '@navigation', '@smoke']
+    }, async ({ page }) => {
+      await loginPage.login(user.username, user.password);
 
-        // Open the burger menu
-        await navigationPage.openBurgerMenu();
+      // Verify logged in successfully
+      const inventoryItems = await productPage.getInventoryItems();
+      expect(inventoryItems.length).toBeGreaterThan(0);
 
-        // Verify that the burger menu is open by checking if the logout link is visible
-        await navigationPage.expectLogoutLinkVisible();
-        // Close the burger menu by clicking outside of it
-        await page.click('#react-burger-cross-btn'); // Click on the body to close the menu
-
-        // Verify that the burger menu is closed by checking if the logout link is not visible
-        await navigationPage.expectLogoutLinkNotVisible();
-    }
-    );
-
-    test(` verfy about button functionality in burger menu for ${user.username}`, async ({ page }) => {
-        const loginPage = new LoginPage(page);
-        const productPage = new ProductPage(page);
-        const navigationPage = new NavigationPage(page);
-
-        await loginPage.openPage();
-        await loginPage.login(user.username, user.password);
-
-        // Verify that the inventory items are visible
-        const inventoryItems = await productPage.getInventoryItems();
-        expect(inventoryItems.length).toBeGreaterThan(0);
-
-        // Open the burger menu
-        await navigationPage.clickAbout();
-
-        // Verify the url
-        await expect(page).toHaveURL(/.*\/saucelabs/);
-
+      // Open and verify menu
+      await navigationPage.openBurgerMenu();
+      await navigationPage.expectLogoutLinkVisible();
+      
+      // Close and verify menu closed
+      await page.click('#react-burger-cross-btn');
+      await navigationPage.expectLogoutLinkNotVisible();
     });
+
+    test(`verify about button functionality for ${user.username}`, {
+      tag: ['@burger', '@navigation', '@about']
+    }, async ({ page }) => {
+      await loginPage.login(user.username, user.password);
+
+      // Verify logged in successfully
+      const inventoryItems = await productPage.getInventoryItems();
+      expect(inventoryItems.length).toBeGreaterThan(0);
+
+      // Test about navigation
+      await navigationPage.clickAbout();
+      await expect(page).toHaveURL(/.*saucelabs/);
+    });
+  });
 });
