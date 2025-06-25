@@ -59,7 +59,7 @@ Object.values(validUsers).forEach(user => {
     // Check for error message if any
     const errorMessage = await checkoutInfoPage.getErrorMessage();
     // asert that there is no error message
-    expect(await errorMessage.isVisible()).toBeFalsy();
+    expect(await errorMessage.isVisible()).toBe(false);
 
     // Verify that we are on the overview page
     await expect(page).toHaveURL(/.*\/checkout-step-two/);
@@ -75,7 +75,7 @@ Object.values(validUsers).forEach(user => {
     await expect(page).toHaveURL(/.*\/checkout-complete/);
     // Verify that the order confirmation message is visible
     const orderConfirmationMessage = await orderConfirmationPage.getOrderConfirmationMessage();
-    expect(await orderConfirmationMessage.match('Thank you for your order!')).toBeTruthy();
+    expect(await orderConfirmationMessage.match('Thank you for your order!')).toBe(true);
     
   });
 });
