@@ -3,7 +3,7 @@ import { test } from "../fixtures/auth-fixture";
 import { LoginPage } from "../pages/login-page";
 import { ProductPage } from "../pages/product-page";
 import { loadUsers } from "../utils/loadUsers";
-import { NavigationPage } from "../pages/navigation-page";
+import { MenuPage } from "../pages/menu-page";
 
 const users = loadUsers();
 const standard_user = users['standard_user'];
@@ -11,12 +11,12 @@ const standard_user = users['standard_user'];
 test.describe('Authentication Tests', () => {
   let loginPage: LoginPage;
   let productPage: ProductPage;
-  let navigationPage: NavigationPage;
+  let menuPage: MenuPage;
 
   test.beforeEach(async ({ page }) => {
     loginPage = new LoginPage(page);
     productPage = new ProductPage(page);
-    navigationPage = new NavigationPage(page);
+    menuPage = new MenuPage(page);
     
     await loginPage.openPage(); // Every auth test starts here
   });
@@ -49,7 +49,7 @@ test('verify user can logout', {tag:['@auth', '@smoke', '@logout']}, async ({ pa
   expect(inventoryItems.length).toBeGreaterThan(0);
 
   // Logout via burger menu
-  await navigationPage.logout();
+  await menuPage.logout();
 
   // Validate redirect to login page
   await expect(page).toHaveURL('/');

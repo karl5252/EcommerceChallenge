@@ -1,6 +1,6 @@
 import { Page } from '@playwright/test';
 
-export class NavigationPage {
+export class MenuPage {
   private page: Page;
 
   private menuButton = '#react-burger-menu-btn';

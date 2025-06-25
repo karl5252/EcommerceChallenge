@@ -3,7 +3,7 @@ import { expect } from "@playwright/test";
 import { loadUsers } from "../utils/loadUsers";
 import { LoginPage } from "../pages/login-page";
 import { ProductPage } from "../pages/product-page";
-import { NavigationPage } from "../pages/navigation-page";
+import { MenuPage } from "../pages/menu-page";
 
 const users = loadUsers();
 const validUsers = Object.values(users).filter(user => user.shouldBeLoggedIn);
@@ -11,12 +11,12 @@ const validUsers = Object.values(users).filter(user => user.shouldBeLoggedIn);
 test.describe('Product Tests', () => {
   let loginPage: LoginPage;
   let productPage: ProductPage;
-  let navigationPage: NavigationPage;
+  let menuPage: MenuPage;
 
   test.beforeEach(async ({ page }) => {
     loginPage = new LoginPage(page);
     productPage = new ProductPage(page);
-    navigationPage = new NavigationPage(page);
+    menuPage = new MenuPage(page);
     
     await loginPage.openPage();
   });
@@ -102,7 +102,7 @@ test.describe('Product Tests', () => {
         let cartCount = await productPage.getCartItemCount();
         expect(cartCount).toBeGreaterThan(0);
 
-        await navigationPage.resetAppState();
+        await menuPage.resetAppState();
         cartCount = await productPage.getCartItemCount();
         expect(cartCount).toBe(0);
       });
@@ -113,7 +113,7 @@ test.describe('Product Tests', () => {
         await loginPage.login(user.username, user.password);
 
         const initialPrices = await productPage.getProductPrices();
-        await navigationPage.clickAllItems();
+        await menuPage.clickAllItems();
         const pricesAfterNavigation = await productPage.getProductPrices();
 
         expect(pricesAfterNavigation).toEqual(initialPrices);

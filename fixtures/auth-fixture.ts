@@ -1,7 +1,7 @@
 import { test as base, Page } from '@playwright/test';
 import { LoginPage } from '../pages/login-page';
 import { ProductPage } from '../pages/product-page';
-import { NavigationPage } from '../pages/navigation-page';
+import { MenuPage } from '../pages/menu-page';
 import { CartPage } from '../pages/cart-page';
 import { CheckoutInfoPage } from '../pages/checkout-info-page';
 import { CheckoutOverviewPage } from '../pages/checkout-overview-page';
@@ -10,7 +10,7 @@ export const test = base.extend<{
   page: Page;
   loginPage: LoginPage;
   productPage: ProductPage;
-  navigationPage: NavigationPage;
+  menuPage: MenuPage;
   cartPage: CartPage;
   checkoutInfoPage: CheckoutInfoPage;
   checkoutOverviewPage: CheckoutOverviewPage;
@@ -35,9 +35,9 @@ export const test = base.extend<{
     const productPage = new ProductPage(page);
     await use(productPage);
   },
-  navigationPage: async ({ page }, use) => {
-    const navigationPage = new NavigationPage(page);
-    await use(navigationPage);
+  menuPage: async ({ page }, use) => {
+    const menuPage = new MenuPage(page);
+    await use(menuPage);
   },
   cartPage: async ({ page }, use) => {
     const cartPage = new CartPage(page);

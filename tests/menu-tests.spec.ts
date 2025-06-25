@@ -3,7 +3,7 @@ import { expect } from "@playwright/test";
 import { loadUsers } from "../utils/loadUsers";
 import { ProductPage } from "../pages/product-page";
 import { LoginPage } from "../pages/login-page";
-import { NavigationPage } from "../pages/navigation-page";
+import { MenuPage } from "../pages/menu-page";
 
 const users = loadUsers();
 const validUsers = Object.values(users).filter(user => user.shouldBeLoggedIn);
@@ -11,12 +11,12 @@ const validUsers = Object.values(users).filter(user => user.shouldBeLoggedIn);
 test.describe('Burger Menu Tests', () => {
   let loginPage: LoginPage;
   let productPage: ProductPage;
-  let navigationPage: NavigationPage;
+  let menuPage: MenuPage;
 
   test.beforeEach(async ({ page }) => {
     loginPage = new LoginPage(page);
     productPage = new ProductPage(page);
-    navigationPage = new NavigationPage(page);
+    menuPage = new MenuPage(page);
     
     await loginPage.openPage();
   });
@@ -32,12 +32,12 @@ test.describe('Burger Menu Tests', () => {
       expect(inventoryItems.length).toBeGreaterThan(0);
 
       // Open and verify menu
-      await navigationPage.openBurgerMenu();
-      await navigationPage.expectLogoutLinkVisible();
+      await menuPage.openBurgerMenu();
+      await menuPage.expectLogoutLinkVisible();
       
       // Close and verify menu closed
       await page.click('#react-burger-cross-btn');
-      await navigationPage.expectLogoutLinkNotVisible();
+      await menuPage.expectLogoutLinkNotVisible();
     });
 
     test(`verify about button functionality for ${user.username}`, {
@@ -50,7 +50,7 @@ test.describe('Burger Menu Tests', () => {
       expect(inventoryItems.length).toBeGreaterThan(0);
 
       // Test about navigation
-      await navigationPage.clickAbout();
+      await menuPage.clickAbout();
       await expect(page).toHaveURL(/.*saucelabs/);
     });
   });
