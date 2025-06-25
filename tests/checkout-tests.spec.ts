@@ -19,7 +19,6 @@ import { OrderConfirmationPage } from "../pages/order-confirmation-page";
 
 const users = loadUsers();
 const standard_user = users['standard_user'];
-const problem_user = users['problem_user'];
 const validUsers = Object.values(users).filter(user => user.shouldBeLoggedIn);
 
 
@@ -146,4 +145,28 @@ Object.values(validUsers).forEach(user => {
     const finalCartCount = await productPage.getCartItemCount();
     expect(finalCartCount).toBe(initialCartCount - 1);
   });
+});
+
+test('verify user cannot proceed to checkout with invalid address', async ({ page }) => {
+  const loginPage = new LoginPage(page);
+  const productPage = new ProductPage(page);
+  const cartPage = new CartPage(page);
+  const checkoutInfoPage = new CheckoutInfoPage(page);
+
+  await loginPage.openPage();
+  await loginPage.login(standard_user.username, standard_user.password);
+
+  // Add item and go to cart
+  await productPage.addFirstitemToCart();
+  await productPage.clickCartIcon();
+
+  // Click checkout button
+  await cartPage.clickCheckoutButton();
+
+  // Fill in invalid address
+  await checkoutInfoPage.fillCheckoutInfo('Invalid', '', ''); // Missing last name and postal code
+
+  // Verify error message is shown
+  const errorMessage = await checkoutInfoPage.getErrorMessage();
+  expect(await errorMessage.isVisible()).toBe(true);
 });
