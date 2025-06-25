@@ -132,3 +132,27 @@ Object.values(validUsers).forEach(user => {
         expect(cartCount).toBe(0);
     });
 });
+
+test('verify user price consistency when navigating via All Items', async ({ page }) => {
+    // This test checks if the prices remain consistent when navigating via the All Items link in the burger menu. Visual user is expected to fail here.
+    const loginPage = new LoginPage(page);
+    const productPage = new ProductPage(page);
+    const navigationPage = new NavigationPage(page);
+
+    await loginPage.openPage();
+    await loginPage.login(standard_user.username, standard_user.password);
+
+    // Get initial prices
+    const initialPrices = await productPage.getProductPrices();
+
+    // Navigate via burger menu -> All Items
+    await navigationPage.openBurgerMenu();
+    await page.click('#inventory_sidebar_link'); // All Items link
+
+    // Get prices after navigation
+    const pricesAfterNavigation = await productPage.getProductPrices();
+
+    // For normal users, prices should stay the same
+    // For visual_user, this will likely fail (which is the bug)
+    expect(pricesAfterNavigation).toEqual(initialPrices);
+});
