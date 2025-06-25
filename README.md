@@ -123,6 +123,9 @@ npx playwright test --grep="@bug"       # Tests that expose bugs
 * Test Grouping: Organized by functionality with clear pass/fail indicators
 * Bug Documentation: Failed tests highlight specific application issues
 * Cross-Browser Results: Consistent bug reproduction across all browsers
+- **CI/CD Reports**: Automatically generated in GitHub Actions as artifacts
+- **Local Reports**: Run `npm test` and open `playwright-report/index.html`
+- **Live Example**: See latest test results in the Actions tab of this repository
 
 # Design Patterns Used
 ## Page Object Model
