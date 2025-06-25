@@ -33,4 +33,24 @@ Object.values(validUsers).forEach(user => {
         await navigationPage.expectLogoutLinkNotVisible();
     }
     );
+
+    test(` verfy about button functionality in burger menu for ${user.username}`, async ({ page }) => {
+        const loginPage = new LoginPage(page);
+        const productPage = new ProductPage(page);
+        const navigationPage = new NavigationPage(page);
+
+        await loginPage.openPage();
+        await loginPage.login(user.username, user.password);
+
+        // Verify that the inventory items are visible
+        const inventoryItems = await productPage.getInventoryItems();
+        expect(inventoryItems.length).toBeGreaterThan(0);
+
+        // Open the burger menu
+        await navigationPage.clickAbout();
+
+        // Verify the url
+        await expect(page).toHaveURL(/.*\/saucelabs/);
+
+    });
 });
