@@ -2,49 +2,10 @@ import { expect } from "@playwright/test";
 import { test } from "../fixtures/auth-fixture";
 import { LoginPage } from "../pages/login-page";
 import { ProductPage } from "../pages/product-page";
+import { loadUsers } from "../utils/loadUsers";
 
-const users = {
-  standard_user: {
-    username: 'standard_user',
-    password: 'secret_sauce',
-    shouldBeLoggedIn: true,
-  },
-  locked_out_user: {
-    username: 'locked_out_user',
-    password: 'secret_sauce',
-    shouldBeLoggedIn: false,
-  },
-  problem_user: {
-    username: 'problem_user',
-    password: 'secret_sauce',
-    shouldBeLoggedIn: true,
-  },
-  performance_glitch_user: {
-    username: 'performance_glitch_user',
-    password: 'secret_sauce',
-    shouldBeLoggedIn: true,
-  },
-  invalid_user: {
-    username: 'invalid_user',
-    password: 'wrong_password',
-    shouldBeLoggedIn: false,
-  },
-  empty_user: {
-    username: '',
-    password: '',
-    shouldBeLoggedIn: false,
-  },
-  error_user: {
-    username: 'error_user',
-    password: 'secret_sauce',
-    shouldBeLoggedIn: true,
-  },
-  visual_user: {
-    username: 'visual_user',
-    password: 'secret_sauce',
-    shouldBeLoggedIn: true,
-  }
-};
+const users = loadUsers();
+
 
 Object.values(users).forEach(user => {
   test(`verify ${user.shouldBeLoggedIn ? 'successful' : 'failed'} login for ${user.username}`, async ({page}) => {
