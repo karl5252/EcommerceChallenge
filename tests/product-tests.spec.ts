@@ -125,8 +125,7 @@ Object.values(validUsers).forEach(user => {
         expect(cartCount).toBeGreaterThan(0);
 
         // Reset app state via burger menu
-        await navigationPage.openBurgerMenu(); 
-        await page.click('#reset_sidebar_link');
+        await navigationPage.resetAppState();
     
         // Verify that the cart is empty after reset
         cartCount = await productPage.getCartItemCount();
