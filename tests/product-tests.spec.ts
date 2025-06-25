@@ -22,11 +22,9 @@ test('verify if page loads and user can add products to cart', async ({ page}) =
     const inventoryItems = await productPage.getInventoryItems();
     expect(inventoryItems.length).toBeGreaterThan(0);
     // Add the first product to the cart
-    const firstAddToCartButton = page.locator('.inventory_item .btn_primary').first();
-    await firstAddToCartButton.click();
+    await productPage.addFirstitemToCart();
     // Verify that the cart icon updates with the number of items in the cart
-    const cartIcon = await page.$('.shopping_cart_badge');
-    const cartCount = await cartIcon?.textContent();
-    expect(cartCount).toBe('1');
+    let cartCount = await productPage.getCartItemCount() 
+    expect(cartCount).toBe(1);
     
 });
