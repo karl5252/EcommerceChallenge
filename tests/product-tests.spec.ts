@@ -76,3 +76,37 @@ Object.values(validUsers).forEach(user => {
         expect(cartCount).toBe(totalItems);
     });
 });
+
+Object.values(validUsers).forEach(user => {
+    test(`verify ${user.username} can sort products by name (A-Z)`, async ({ page }) => {
+        const loginPage = new LoginPage(page);
+        const productPage = new ProductPage(page);
+
+        await loginPage.openPage();
+        await loginPage.login(user.username, user.password);
+
+        await page.selectOption('.product_sort_container', 'az');
+        
+        const productNames = await page.$$eval('.inventory_item_name', 
+            elements => elements.map(el => el.textContent?.trim() || ''));
+        
+        const sortedNames = [...productNames].sort();
+        expect(productNames).toEqual(sortedNames);
+    });
+
+    test(`verify ${user.username} can sort products by price (low to high)`, async ({ page }) => {
+        const loginPage = new LoginPage(page);
+        const productPage = new ProductPage(page);
+
+        await loginPage.openPage();
+        await loginPage.login(user.username, user.password);
+
+        await page.selectOption('.product_sort_container', 'lohi');
+        
+        const prices = await page.$$eval('.inventory_item_price', 
+            elements => elements.map(el => parseFloat(el.textContent?.replace('$', '') || '0')));
+        
+        const sortedPrices = [...prices].sort((a, b) => a - b);
+        expect(prices).toEqual(sortedPrices);
+    });
+});
