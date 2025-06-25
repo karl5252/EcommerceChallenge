@@ -2,11 +2,17 @@
   "name": "ecommercechallenge",
   "version": "1.0.0",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+  "test": "npx playwright test",
+  "test:smoke": "npx playwright test --grep='@smoke'",
+  "test:nav": "npx playwright test --grep='@navigation'", 
+  "test:forms": "npx playwright test --grep='@forms'",
+  "test:bugs": "npx playwright test --grep='@bug'"
+},
   "keywords": [],
-  "author": "",
+  "author": "Karol Michalik",
   "license": "ISC",
-  "description": "",
+  "description": "test fraemwork for ecommerce challenge covering sauce labs page",
   "devDependencies": {
     "@playwright/test": "^1.53.1",
     "@types/node": "^24.0.4"
