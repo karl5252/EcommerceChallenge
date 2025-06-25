@@ -30,4 +30,12 @@ export class NavigationPage {
     await this.openBurgerMenu();
     await this.page.click(this.allItemsLink); 
   }
+
+  async expectLogoutLinkVisible() {
+    await this.page.waitForSelector(this.logoutLink, { state: 'visible' });
+  }
+
+  async expectLogoutLinkNotVisible() {
+  await this.page.waitForSelector(this.logoutLink, { state: 'hidden' });
+  }
 }
