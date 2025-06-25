@@ -1,7 +1,6 @@
 import { Page } from "@playwright/test";
 
 export class ProductPage {
-    
 
     private page: Page;
 
@@ -71,5 +70,8 @@ export class ProductPage {
         const prices = await this.page.$$eval(this.itemPrice, 
             elements => elements.map(el => parseFloat(el.textContent?.replace('$', '') || '0')));
         return prices;
+    }
+    async clickCartIcon() {
+        await this.page.click('.shopping_cart_link');
     }
 }
