@@ -12,7 +12,10 @@ import { expect } from "@playwright/test";
 import { loadUsers } from "../utils/loadUsers";
 import { ProductPage } from "../pages/product-page"; 
 import { LoginPage } from "../pages/login-page";
-import { NavigationPage } from "../pages/navigation-page";
+import { CartPage } from "../pages/cart-page";
+import { CheckoutInfoPage } from "../pages/checkout-info-page";
+import { CheckoutOverviewPage } from "../pages/checkout-overview-page";
+import { OrderConfirmationPage } from "../pages/order-confirmation-page";
 
 const users = loadUsers();
 const standard_user = users['standard_user'];
@@ -24,6 +27,11 @@ Object.values(validUsers).forEach(user => {
   test(`verify that user can add items to cart and proceed to checkout for ${user.username}`, async ({ page }) => {
     const loginPage = new LoginPage(page);
     const productPage = new ProductPage(page);
+    const cartPage = new CartPage(page);
+    const checkoutInfoPage = new CheckoutInfoPage(page);
+    const checkoutOverviewPage = new CheckoutOverviewPage(page);
+    const orderConfirmationPage = new OrderConfirmationPage(page);
+
 
     await loginPage.openPage();
     await loginPage.login(user.username, user.password);
@@ -38,53 +46,36 @@ Object.values(validUsers).forEach(user => {
     // Click on the cart icon
     await productPage.clickCartIcon();
     // Verify that cart shows correct number of items .cart_list  .cart_item
-    const cartItemCound = await page.locator('.cart_item').count();
+    const cartItemCound = await cartPage.getCartItemsCount();
     expect(cartItemCound).toBeGreaterThan(0);
 
     // click checkout button
-    await page.click('.checkout_button');
+    await cartPage.clickCheckoutButton();
     // Verify that we are on the checkout page
     await expect(page).toHaveURL(/.*\/checkout-step-one/);
+
     // Fill in the checkout form with early fail
-    await page.fill('#first-name', 'John');
-    await page.fill('#last-name', 'Doe');
-    await page.fill('#postal-code', '12345');
-
-    const firstName = await page.inputValue('#first-name');
-    const lastName = await page.inputValue('#last-name'); 
-    const postalCode = await page.inputValue('#postal-code');
-
-    expect(firstName).toBe('John');
-    expect(lastName).toBe('Doe');
-    expect(postalCode).toBe('12345');
-
-    // Click on the continue button
-    await page.click('#continue');
+    await checkoutInfoPage.fillCheckoutInfo('Test', 'User', '12345');
+    // Check for error message if any
+    const errorMessage = await checkoutInfoPage.getErrorMessage();
+    // asert that there is no error message
+    expect(await errorMessage.isVisible()).toBeFalsy();
 
     // Verify that we are on the overview page
     await expect(page).toHaveURL(/.*\/checkout-step-two/);
     // Verify that the item prices are correct
-    // Get tax from the UI
-    const taxAmount = await page.$eval('.summary_tax_label', el => 
-    parseFloat(el.textContent?.replace('Tax: $', '') || '0'));
+    const expectedTotal = await checkoutOverviewPage.verifyTotal();
 
-    const itemPrices = await page.$$eval('.inventory_item_price', 
-    prices => prices.map(price => parseFloat(price.textContent?.replace('$', '') || '0')));
-
-    const subtotal = itemPrices.reduce((acc, price) => acc + price, 0);
-    const expectedTotal = subtotal + taxAmount;
-
-    const actualTotal = await page.$eval('.summary_total_label', el => 
-    parseFloat(el.textContent?.replace('Total: $', '') || '0'));
+    const actualTotal = await checkoutOverviewPage.getTotal();
 
     expect(actualTotal).toBeCloseTo(expectedTotal, 2);
     // Click on the finish button
-    await page.click('#finish');
+    await checkoutOverviewPage.clickFinishButton();
     // Verify that we are on the order confirmation page
     await expect(page).toHaveURL(/.*\/checkout-complete/);
     // Verify that the order confirmation message is visible
-    const orderConfirmationMessage = await page.locator('.complete-header');
-    expect(await orderConfirmationMessage.isVisible()).toBeTruthy();
+    const orderConfirmationMessage = await orderConfirmationPage.getOrderConfirmationMessage();
+    expect(await orderConfirmationMessage.match('Thank you for your order!')).toBeTruthy();
     
   }
 );
