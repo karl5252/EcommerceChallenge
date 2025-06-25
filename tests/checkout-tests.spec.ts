@@ -99,3 +99,26 @@ test('verify user cannot proceed to checkout with empty cart', async ({ page }) 
   const isCheckoutButtonDisabled = await cartPage.isCheckoutButtonDisabled();
   expect(isCheckoutButtonDisabled).toBe(true);
 });
+
+test('verify continue shopping navigation works', async ({ page }) => {
+  const loginPage = new LoginPage(page);
+  const productPage = new ProductPage(page);
+  const cartPage = new CartPage(page);
+
+  await loginPage.openPage();
+  await loginPage.login(standard_user.username, standard_user.password);
+
+  // Add item and go to cart
+  await productPage.addFirstitemToCart();
+  await productPage.clickCartIcon();
+
+  // Click continue shopping
+  await cartPage.clickContinueShoppingButton();
+
+  // Verify we're back on products page
+  await expect(page).toHaveURL(/.*\/inventory/);
+  
+  // Verify products are still visible
+  const inventoryItems = await productPage.getInventoryItems();
+  expect(inventoryItems.length).toBeGreaterThan(0);
+});

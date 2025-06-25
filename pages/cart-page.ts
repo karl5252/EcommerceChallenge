@@ -5,6 +5,7 @@ export class CartPage {
 
     private cartItems = '.cart_item';
     private checkoutButton = '.checkout_button';
+    private continueShoppingButton = '#continue-shopping';
 
     constructor(page: Page) {
         this.page = page;
@@ -21,7 +22,8 @@ export class CartPage {
         return await checkoutButton.isDisabled();
   
     }
-
-
-
+    async clickContinueShoppingButton() {
+      const continueShoppingButton = this.page.locator(this.continueShoppingButton);
+      await continueShoppingButton.click();
+    }
 }
