@@ -2,49 +2,12 @@ import { expect } from "@playwright/test";
 import { test } from "../fixtures/auth-fixture";
 import { LoginPage } from "../pages/login-page";
 import { ProductPage } from "../pages/product-page";
+import { loadUsers } from "../utils/loadUsers";
+import { NavigationPage } from "../pages/navigation-page";
 
-const users = {
-  standard_user: {
-    username: 'standard_user',
-    password: 'secret_sauce',
-    shouldBeLoggedIn: true,
-  },
-  locked_out_user: {
-    username: 'locked_out_user',
-    password: 'secret_sauce',
-    shouldBeLoggedIn: false,
-  },
-  problem_user: {
-    username: 'problem_user',
-    password: 'secret_sauce',
-    shouldBeLoggedIn: true,
-  },
-  performance_glitch_user: {
-    username: 'performance_glitch_user',
-    password: 'secret_sauce',
-    shouldBeLoggedIn: true,
-  },
-  invalid_user: {
-    username: 'invalid_user',
-    password: 'wrong_password',
-    shouldBeLoggedIn: false,
-  },
-  empty_user: {
-    username: '',
-    password: '',
-    shouldBeLoggedIn: false,
-  },
-  error_user: {
-    username: 'error_user',
-    password: 'secret_sauce',
-    shouldBeLoggedIn: true,
-  },
-  visual_user: {
-    username: 'visual_user',
-    password: 'secret_sauce',
-    shouldBeLoggedIn: true,
-  }
-};
+const users = loadUsers();
+const standard_user = users['standard_user'];
+
 
 Object.values(users).forEach(user => {
   test(`verify ${user.shouldBeLoggedIn ? 'successful' : 'failed'} login for ${user.username}`, async ({page}) => {
@@ -68,3 +31,30 @@ Object.values(users).forEach(user => {
     }
   });
 });
+
+
+test('verify user can logout', async ({ page }) => {
+  const loginPage = new LoginPage(page);
+  const productPage = new ProductPage(page);
+    const navigationPage = new NavigationPage(page);
+
+
+  await loginPage.openPage();
+  await loginPage.login(standard_user.username, standard_user.password);
+
+  // Assert successful login
+  const inventoryItems = await productPage.getInventoryItems();
+  expect(inventoryItems.length).toBeGreaterThan(0);
+
+  // Logout via burger menu
+  await navigationPage.logout();
+
+  // Validate redirect to login page
+  await expect(page).toHaveURL('/');
+  await loginPage.expectLoginButtonVisible();
+
+  // Validate session is gone on reload
+  await page.reload();
+  await loginPage.expectLoginButtonVisible();
+});
+  
