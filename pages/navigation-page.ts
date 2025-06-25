@@ -7,6 +7,7 @@ export class NavigationPage {
   private logoutLink = '#logout_sidebar_link';
   private resetAppStateLink = '#reset_sidebar_link';
   private allItemsLink = '#inventory_sidebar_link';
+  private aboutLink = '#about_sidebar_link';
 
   constructor(page: Page) {
     this.page = page;
@@ -29,5 +30,18 @@ export class NavigationPage {
   async clickAllItems() {
     await this.openBurgerMenu();
     await this.page.click(this.allItemsLink); 
+  }
+
+  async clickAbout() {
+    await this.openBurgerMenu();
+    await this.page.click(this.aboutLink);
+  }
+
+  async expectLogoutLinkVisible() {
+    await this.page.waitForSelector(this.logoutLink, { state: 'visible' });
+  }
+
+  async expectLogoutLinkNotVisible() {
+  await this.page.waitForSelector(this.logoutLink, { state: 'hidden' });
   }
 }
