@@ -1,6 +1,7 @@
 import { Page } from "@playwright/test";
 
 export class ProductPage {
+
     private page: Page;
 
     private inventoryItem = '.inventory_item';
@@ -23,11 +24,21 @@ export class ProductPage {
 
     async getCartItemCount() {
         const cartIcon = this.page.locator(this.cartIconCounter);
-        if (cartIcon) {
+        if (await cartIcon.isVisible()) {
             const cartCount = await cartIcon.textContent();
             return parseInt(cartCount || '0', 10);
         }
         return 0;
     }
 
+    async addAllItemsToCart() {
+        const addToCartButtons = this.page.locator(this.addToCartButton);
+        const count = await addToCartButtons.count();
+        for (let i = 0; i < count; i++) {
+            const button = addToCartButtons.first(); // Get the first button in the list (list shrinks as items are added)
+            await button.scrollIntoViewIfNeeded();  // Ensure the button is in view
+            await button.click();
+            await this.page.waitForTimeout(100); // Small delay to let DOM update
+        }
+    }
 }
