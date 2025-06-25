@@ -1,12 +1,17 @@
 import { Page } from "@playwright/test";
 
 export class ProductPage {
+    
 
     private page: Page;
 
     private inventoryItem = '.inventory_item';
     private addToCartButton = '.inventory_item .btn_primary';
+    private removeFromCartButton = '.inventory_item .btn_secondary';
     private cartIconCounter = '.shopping_cart_badge';
+    private sortDropdown = '.product_sort_container';
+    private itemPrice = '.inventory_item_price';
+    private itemName = '.inventory_item_name';
 
     constructor(page: Page) {
     this.page = page;
@@ -40,5 +45,31 @@ export class ProductPage {
             await button.click();
             await this.page.waitForTimeout(100); // Small delay to let DOM update
         }
+    }
+
+    async removeFirstItemFromCart() {
+        const firstRemoveButton = this.page.locator(this.removeFromCartButton).first();
+        await firstRemoveButton.click();
+    }
+
+    async sortByNameAZ() {
+        await this.page.selectOption(this.sortDropdown, 'az');
+    }
+
+    async sortByPriceLowToHigh() {
+        await this.page.selectOption(this.sortDropdown, 'lohi');
+    }
+
+    async getProductNames() {
+        const productNames = await this.page.$$eval(this.itemName, elements => 
+            elements.map(el => el.textContent?.trim() || '')
+        );
+        return productNames;
+    }
+
+    async getProductPrices() {
+        const prices = await this.page.$$eval(this.itemPrice, 
+            elements => elements.map(el => parseFloat(el.textContent?.replace('$', '') || '0')));
+        return prices;
     }
 }

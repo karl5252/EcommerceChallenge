@@ -47,8 +47,7 @@ Object.values(validUsers).forEach(user => {
         expect(cartCount).toBe(1);
 
         // Remove the first product from the cart
-        const firstRemoveButton = page.locator('.inventory_item .btn_secondary').first();
-        await firstRemoveButton.click();
+        await productPage.removeFirstItemFromCart();
 
         // Verify that the cart icon updates with the number of items in the cart
         cartCount = await productPage.getCartItemCount();
@@ -85,10 +84,9 @@ Object.values(validUsers).forEach(user => {
         await loginPage.openPage();
         await loginPage.login(user.username, user.password);
 
-        await page.selectOption('.product_sort_container', 'az');
+        await productPage.sortByNameAZ();
         
-        const productNames = await page.$$eval('.inventory_item_name', 
-            elements => elements.map(el => el.textContent?.trim() || ''));
+        const productNames = await productPage.getProductNames();
         
         const sortedNames = [...productNames].sort();
         expect(productNames).toEqual(sortedNames);
@@ -101,10 +99,9 @@ Object.values(validUsers).forEach(user => {
         await loginPage.openPage();
         await loginPage.login(user.username, user.password);
 
-        await page.selectOption('.product_sort_container', 'lohi');
+        await productPage.sortByPriceLowToHigh();
         
-        const prices = await page.$$eval('.inventory_item_price', 
-            elements => elements.map(el => parseFloat(el.textContent?.replace('$', '') || '0')));
+        const prices = await productPage.getProductPrices();
         
         const sortedPrices = [...prices].sort((a, b) => a - b);
         expect(prices).toEqual(sortedPrices);
