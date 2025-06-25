@@ -1,7 +1,6 @@
 import { expect, Page } from "@playwright/test";
 
 export class CartPage {
-   
     private page: Page;
 
     private cartItems = '.cart_item';
@@ -17,4 +16,12 @@ export class CartPage {
     async clickCheckoutButton() {
         await this.page.click(this.checkoutButton);
     }
+    async isCheckoutButtonDisabled() {
+        const checkoutButton = this.page.locator(this.checkoutButton);
+        return await checkoutButton.isDisabled();
+  
+    }
+
+
+
 }

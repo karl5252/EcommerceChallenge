@@ -79,3 +79,23 @@ Object.values(validUsers).forEach(user => {
     
   });
 });
+
+test('verify user cannot proceed to checkout with empty cart', async ({ page }) => {
+  const loginPage = new LoginPage(page);
+  const productPage = new ProductPage(page);
+  const cartPage = new CartPage(page);
+
+  await loginPage.openPage();
+  await loginPage.login(standard_user.username, standard_user.password);
+
+  // Click on the cart icon
+  await productPage.clickCartIcon();
+  
+  // Verify that the cart is empty
+  const isCartEmpty = await cartPage.getCartItemsCount();
+  expect(isCartEmpty).toBe(0);
+
+  // Verify that the checkout button is disabled
+  const isCheckoutButtonDisabled = await cartPage.isCheckoutButtonDisabled();
+  expect(isCheckoutButtonDisabled).toBe(true);
+});
