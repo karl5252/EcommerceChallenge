@@ -25,6 +25,10 @@ export class LoginPage {
     }
 
     async getErrorMessage() {
-    return this.page.locator(this.errorMessage);
+        return this.page.locator(this.errorMessage);
+    }
+
+    async expectLoginButtonVisible() {
+        await expect(this.page.locator(this.loginButton)).toBeVisible();
     }
 }

@@ -3,8 +3,10 @@ import { test } from "../fixtures/auth-fixture";
 import { LoginPage } from "../pages/login-page";
 import { ProductPage } from "../pages/product-page";
 import { loadUsers } from "../utils/loadUsers";
+import { NavigationPage } from "../pages/navigation-page";
 
 const users = loadUsers();
+const standard_user = users['standard_user'];
 
 
 Object.values(users).forEach(user => {
@@ -34,24 +36,25 @@ Object.values(users).forEach(user => {
 test('verify user can logout', async ({ page }) => {
   const loginPage = new LoginPage(page);
   const productPage = new ProductPage(page);
+    const navigationPage = new NavigationPage(page);
+
 
   await loginPage.openPage();
-  await loginPage.login('standard_user', 'secret_sauce');
+  await loginPage.login(standard_user.username, standard_user.password);
 
   // Assert successful login
   const inventoryItems = await productPage.getInventoryItems();
   expect(inventoryItems.length).toBeGreaterThan(0);
 
   // Logout via burger menu
-  await page.click('#react-burger-menu-btn');
-  await page.click('#logout_sidebar_link');
+  await navigationPage.logout();
 
   // Validate redirect to login page
   await expect(page).toHaveURL('/');
-  await expect(page.locator('#login-button')).toBeVisible();
+  await loginPage.expectLoginButtonVisible();
 
   // Validate session is gone on reload
   await page.reload();
-  await expect(page.locator('#login-button')).toBeVisible();
+  await loginPage.expectLoginButtonVisible();
 });
   
