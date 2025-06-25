@@ -56,23 +56,23 @@ Object.values(validUsers).forEach(user => {
     });
 });
 
-//Object.values(validUsers).forEach(user => {
-test (`verify ${standard_user.username} can add multiple products to cart`, async ({ page }) => {
-    const loginPage = new LoginPage(page);
-    const productPage = new ProductPage(page);
+Object.values(validUsers).forEach(user => {
+    test (`verify ${user.username} can add multiple products to cart`, async ({ page }) => {
+        const loginPage = new LoginPage(page);
+        const productPage = new ProductPage(page);
 
-    await loginPage.openPage();
-    await loginPage.login(standard_user.username, standard_user.password);
+        await loginPage.openPage();
+        await loginPage.login(user.username, user.password);
 
-    // Add all avaialbe products to the cart
-    const inventoryItems = await productPage.getInventoryItems();
-    const totalItems = inventoryItems.length;
+        // Add all avaialbe products to the cart
+        const inventoryItems = await productPage.getInventoryItems();
+        const totalItems = inventoryItems.length;
 
-    // Add all products to cart
-    await productPage.addAllItemsToCart();
+        // Add all products to cart
+        await productPage.addAllItemsToCart();
 
-    // Verify that the cart icon updates with the number of items in the cart
-    let cartCount = await productPage.getCartItemCount();
-    expect(cartCount).toBe(totalItems);
+        // Verify that the cart icon updates with the number of items in the cart
+        let cartCount = await productPage.getCartItemCount();
+        expect(cartCount).toBe(totalItems);
+    });
 });
-//});
