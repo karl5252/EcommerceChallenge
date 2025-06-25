@@ -22,7 +22,7 @@ export class ProductPage {
     }
 
     async getCartItemCount() {
-        const cartIcon = await this.page.$(this.cartIconCounter);
+        const cartIcon = this.page.locator(this.cartIconCounter);
         if (cartIcon) {
             const cartCount = await cartIcon.textContent();
             return parseInt(cartCount || '0', 10);
