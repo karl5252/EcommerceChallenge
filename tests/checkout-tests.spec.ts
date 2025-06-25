@@ -77,7 +77,5 @@ Object.values(validUsers).forEach(user => {
     const orderConfirmationMessage = await orderConfirmationPage.getOrderConfirmationMessage();
     expect(await orderConfirmationMessage.match('Thank you for your order!')).toBeTruthy();
     
-  }
-);
-}
-);
+  });
+});
