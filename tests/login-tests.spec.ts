@@ -29,3 +29,29 @@ Object.values(users).forEach(user => {
     }
   });
 });
+
+
+test('verify user can logout', async ({ page }) => {
+  const loginPage = new LoginPage(page);
+  const productPage = new ProductPage(page);
+
+  await loginPage.openPage();
+  await loginPage.login('standard_user', 'secret_sauce');
+
+  // Assert successful login
+  const inventoryItems = await productPage.getInventoryItems();
+  expect(inventoryItems.length).toBeGreaterThan(0);
+
+  // Logout via burger menu
+  await page.click('#react-burger-menu-btn');
+  await page.click('#logout_sidebar_link');
+
+  // Validate redirect to login page
+  await expect(page).toHaveURL('/');
+  await expect(page.locator('#login-button')).toBeVisible();
+
+  // Validate session is gone on reload
+  await page.reload();
+  await expect(page.locator('#login-button')).toBeVisible();
+});
+  
