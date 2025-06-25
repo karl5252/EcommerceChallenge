@@ -9,6 +9,7 @@ import test, { expect } from "@playwright/test";
 import { loadUsers } from "../utils/loadUsers";
 import { LoginPage } from "../pages/login-page";
 import { ProductPage } from "../pages/product-page";
+import { NavigationPage } from "../pages/navigation-page";
 
 // verify if product images are displayed correctly
 const users = loadUsers();
@@ -105,5 +106,30 @@ Object.values(validUsers).forEach(user => {
         
         const sortedPrices = [...prices].sort((a, b) => a - b);
         expect(prices).toEqual(sortedPrices);
+    });
+});
+Object.values(validUsers).forEach(user => {
+    test(`verify reset app state cleans the cart and resets the app state for user ${user.username}`, async ({ page }) => {
+        const loginPage = new LoginPage(page);
+        const productPage = new ProductPage(page);
+        const navigationPage = new NavigationPage(page);
+
+        await loginPage.openPage();
+        await loginPage.login(user.username, user.password);
+
+        // Add all products to cart
+        await productPage.addAllItemsToCart();
+    
+        // Verify that the cart icon updates with the number of items in the cart
+        let cartCount = await productPage.getCartItemCount();
+        expect(cartCount).toBeGreaterThan(0);
+
+        // Reset app state via burger menu
+        await navigationPage.openBurgerMenu(); 
+        await page.click('#reset_sidebar_link');
+    
+        // Verify that the cart is empty after reset
+        cartCount = await productPage.getCartItemCount();
+        expect(cartCount).toBe(0);
     });
 });
