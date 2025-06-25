@@ -122,3 +122,28 @@ test('verify continue shopping navigation works', async ({ page }) => {
   const inventoryItems = await productPage.getInventoryItems();
   expect(inventoryItems.length).toBeGreaterThan(0);
 });
+
+Object.values(validUsers).forEach(user => {
+  test(`verify ${user.username} can remove item from cart`, async ({ page }) => {
+    const loginPage = new LoginPage(page);
+    const productPage = new ProductPage(page);
+    const cartPage = new CartPage(page);
+
+    await loginPage.openPage();
+    await loginPage.login(user.username, user.password);
+
+    // Add all items to cart
+    await productPage.addAllItemsToCart();
+    const initialCartCount = await productPage.getCartItemCount();
+    
+    // Go to cart
+    await productPage.clickCartIcon();
+    
+    // Remove one item
+    await cartPage.removeFirstItem();
+    
+    // Verify cart count decreased by 1
+    const finalCartCount = await productPage.getCartItemCount();
+    expect(finalCartCount).toBe(initialCartCount - 1);
+  });
+});

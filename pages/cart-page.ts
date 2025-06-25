@@ -6,6 +6,7 @@ export class CartPage {
     private cartItems = '.cart_item';
     private checkoutButton = '.checkout_button';
     private continueShoppingButton = '#continue-shopping';
+    private removeButton = '#remove-sauce-labs-bike-light';
 
     constructor(page: Page) {
         this.page = page;
@@ -25,5 +26,9 @@ export class CartPage {
     async clickContinueShoppingButton() {
       const continueShoppingButton = this.page.locator(this.continueShoppingButton);
       await continueShoppingButton.click();
+    }
+    async removeFirstItem() {
+        const firstItemRemoveButton = this.page.locator(this.removeButton);
+        await firstItemRemoveButton.first().click();
     }
 }
